@@ -62,6 +62,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
+  const [followUpOptions, setFollowUpOptions] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scrollContainerRef = useRef<HTMLElement>(null);
@@ -116,6 +117,18 @@ export default function ChatPage() {
       });
     }
 
+    // Parse [SEÇENEKLER: ...] tag from the final assistant message
+    setMessages((prev) => {
+      const last = prev[prev.length - 1];
+      if (last?.role !== "assistant") return prev;
+      const match = last.content.match(/\[SEÇENEKLER:\s*([^\]]+)\]/);
+      if (!match) return prev;
+      const opts = match[1].split("|").map((s) => s.trim()).filter(Boolean);
+      setFollowUpOptions(opts);
+      const cleaned = last.content.replace(/\[SEÇENEKLER:[^\]]+\]/, "").trimEnd();
+      return [...prev.slice(0, -1), { ...last, content: cleaned }];
+    });
+
     setStreaming(false);
   }
 
@@ -140,16 +153,21 @@ export default function ChatPage() {
     await streamMessage(initial);
   }
 
-  async function send() {
-    const content = input.trim();
+  async function sendText(content: string) {
     if (!content || streaming) return;
-
+    setFollowUpOptions([]);
     const updated: Message[] = [...messages, { role: "user", content }];
     setMessages(updated);
     isAtBottomRef.current = true;
+    await streamMessage(updated);
+  }
+
+  async function send() {
+    const content = input.trim();
+    if (!content || streaming) return;
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
-    await streamMessage(updated);
+    await sendText(content);
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
@@ -217,32 +235,49 @@ export default function ChatPage() {
 
           {/* Chat messages (after onboarding) */}
           {chatStarted &&
-            messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-blue-600 text-white rounded-br-sm whitespace-pre-wrap"
-                      : "bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm"
-                  }`}
-                >
-                  {msg.role === "user" ? (
-                    msg.content
-                  ) : (
-                    <MarkdownMessage content={msg.content} />
+            messages.map((msg, i) => {
+              const isLastAssistant =
+                i === messages.length - 1 && msg.role === "assistant";
+              return (
+                <div key={i} className="flex flex-col gap-2">
+                  <div className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                        msg.role === "user"
+                          ? "bg-blue-600 text-white rounded-br-sm whitespace-pre-wrap"
+                          : "bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm"
+                      }`}
+                    >
+                      {msg.role === "user" ? (
+                        msg.content
+                      ) : (
+                        <MarkdownMessage content={msg.content} />
+                      )}
+                      {streaming &&
+                        isLastAssistant &&
+                        !msg.content && (
+                          <span className="inline-block w-2 h-4 bg-gray-400 animate-pulse rounded-sm align-middle" />
+                        )}
+                    </div>
+                  </div>
+
+                  {/* Follow-up option buttons below last assistant message */}
+                  {isLastAssistant && !streaming && followUpOptions.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pl-1">
+                      {followUpOptions.map((opt) => (
+                        <button
+                          key={opt}
+                          onClick={() => sendText(opt)}
+                          className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
                   )}
-                  {streaming &&
-                    i === messages.length - 1 &&
-                    msg.role === "assistant" &&
-                    !msg.content && (
-                      <span className="inline-block w-2 h-4 bg-gray-400 animate-pulse rounded-sm align-middle" />
-                    )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
           <div ref={bottomRef} />
         </div>
