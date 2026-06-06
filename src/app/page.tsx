@@ -15,14 +15,14 @@ const QUESTIONS = [
     options: ["Lisans", "Yüksek Lisans", "Lise", "Dil Okulu / Hazırlık"],
   },
   {
-    id: "region",
-    text: "Hangi bölgeyi / ülkeyi düşünüyorsun?",
-    options: ["Avrupa", "Amerika & Kanada", "Dubai & BAE", "Henüz bilmiyorum"],
+    id: "grade",
+    text: "Şu an hangi sınıftasın?",
+    options: ["9. Sınıf", "10. Sınıf", "11. Sınıf", "12. Sınıf / Mezun"],
   },
   {
     id: "budget",
     text: "Yıllık eğitim bütçen ne kadar?",
-    options: ["5.000$ altı", "5.000–15.000$", "15.000$+", "Burs arıyorum"],
+    options: ["5.000$ altı", "5.000–15.000$", "15.000–25.000$", "25.000$+"],
   },
   {
     id: "english",
@@ -30,9 +30,9 @@ const QUESTIONS = [
     options: ["Başlangıç", "Orta seviye", "İleri seviye", "IELTS / TOEFL var"],
   },
   {
-    id: "timeline",
-    text: "Ne zaman başlamayı planlıyorsun?",
-    options: ["6 ay içinde", "1 yıl içinde", "1–2 yıl içinde", "Henüz bilmiyorum"],
+    id: "region",
+    text: "Hangi bölgeyi / ülkeyi düşünüyorsun?",
+    options: ["Avrupa", "Amerika & Kanada", "Dubai & BAE", "Henüz bilmiyorum"],
   },
 ];
 
@@ -131,10 +131,9 @@ export default function ChatPage() {
     // All questions answered — kick off chat
     setStep(QUESTIONS.length);
     const summary =
-      `Merhaba! Şu an yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
-      `${newAnswers[1]} bölgesini düşünüyorum, yıllık bütçem ${newAnswers[2].toLowerCase()} civarı. ` +
-      `İngilizce seviyem ${newAnswers[3].toLowerCase()} ve ${newAnswers[4].toLowerCase()} başlamayı hedefliyorum. ` +
-      `Bana ne tavsiye edersin?`;
+      `Merhaba! Şu an ${newAnswers[1].toLowerCase()} öğrencisiyim ve yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
+      `Yıllık bütçem ${newAnswers[2].toLowerCase()} civarı, İngilizce seviyem ${newAnswers[3].toLowerCase()}. ` +
+      `${newAnswers[4]} bölgesini düşünüyorum. Bana ne tavsiye edersin?`;
     const initial: Message[] = [{ role: "user", content: summary }];
     setMessages(initial);
     isAtBottomRef.current = true;
