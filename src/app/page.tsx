@@ -132,8 +132,16 @@ export default function ChatPage() {
     setStreaming(false);
   }
 
+  const SKIP_GRADE = new Set(["Lisans", "Yüksek Lisans"]);
+
   async function handleOptionClick(option: string) {
-    const newAnswers = [...answers, option];
+    let newAnswers = [...answers, option];
+
+    // If education level doesn't have school grades, skip the grade question
+    if (newAnswers.length === 1 && SKIP_GRADE.has(option)) {
+      newAnswers = [...newAnswers, "—"]; // sentinel so indices stay aligned
+    }
+
     setAnswers(newAnswers);
 
     if (newAnswers.length < QUESTIONS.length) {
@@ -143,8 +151,9 @@ export default function ChatPage() {
 
     // All questions answered — kick off chat
     setStep(QUESTIONS.length);
+    const gradeText = newAnswers[1] !== "—" ? `Şu an ${newAnswers[1].toLowerCase()} öğrencisiyim ve ` : "";
     const summary =
-      `Merhaba! Şu an ${newAnswers[1].toLowerCase()} öğrencisiyim ve yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
+      `Merhaba! ${gradeText}yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
       `Yıllık bütçem ${newAnswers[2].toLowerCase()} civarı, İngilizce seviyem ${newAnswers[3].toLowerCase()}. ` +
       `${newAnswers[4]} bölgesini düşünüyorum. Bana ne tavsiye edersin?`;
     const initial: Message[] = [{ role: "user", content: summary }];
@@ -206,6 +215,9 @@ export default function ChatPage() {
           {QUESTIONS.map((q, i) => {
             const answered = i < answers.length;
             const isCurrent = i === step && !chatStarted;
+
+            // Hide the grade question when it was auto-skipped
+            if (i === 1 && answers[1] === "—") return null;
 
             if (i > step && !chatStarted) return null;
 
