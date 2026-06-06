@@ -158,7 +158,7 @@ export default function ChatPage() {
             onKeyDown={onKeyDown}
             disabled={streaming}
             placeholder="Sorunuzu yazın..."
-            className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm leading-relaxed outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 max-h-40 bg-white disabled:opacity-50"
+            className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 leading-relaxed outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 max-h-40 bg-white disabled:opacity-50"
           />
           <button
             type="submit"
