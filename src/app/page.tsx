@@ -229,7 +229,10 @@ export default function ChatPage() {
                   <UserBubble content={answers[i]} />
                 ) : isCurrent ? (
                   <div className="flex flex-wrap gap-2 pl-1">
-                    {q.options.map((opt) => (
+                    {(q.id === "grade" && answers[0] === "Ortaokul"
+                      ? ["5. Sınıf", "6. Sınıf", "7. Sınıf", "8. Sınıf"]
+                      : q.options
+                    ).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => handleOptionClick(opt)}
