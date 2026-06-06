@@ -25,7 +25,8 @@ export async function POST(req: Request) {
   let systemPrompt = BASE_SYSTEM;
   if (query) {
     try {
-      const context = await retrieveContext(query);
+      const timeout = new Promise<string>((resolve) => setTimeout(() => resolve(""), 2500));
+      const context = await Promise.race([retrieveContext(query), timeout]);
       if (context) {
         systemPrompt += `\n\n---\nAşağıda bu soruyla ilgili veritabanından çekilen güncel bilgiler var. Yanıt verirken bunları kullan:\n\n${context}`;
       }

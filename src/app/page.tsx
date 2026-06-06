@@ -14,9 +14,24 @@ export default function ChatPage() {
   const [streaming, setStreaming] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const scrollContainerRef = useRef<HTMLElement>(null);
+  const isAtBottomRef = useRef(true);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const onScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      isAtBottomRef.current = scrollHeight - scrollTop - clientHeight < 120;
+    };
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isAtBottomRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   async function send() {
@@ -25,6 +40,7 @@ export default function ChatPage() {
 
     const updated: Message[] = [...messages, { role: "user", content }];
     setMessages(updated);
+    isAtBottomRef.current = true;
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
     setStreaming(true);
@@ -82,7 +98,7 @@ export default function ChatPage() {
         <span className="text-sm text-gray-400">Yurt dışı eğitim danışmanın</span>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 py-6">
+      <main ref={scrollContainerRef as React.RefObject<HTMLElement>} className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           {messages.length === 0 && (
             <div className="text-center mt-20">
