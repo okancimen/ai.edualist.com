@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Edualist — AI Tutor",
-  description: "Ask anything. Learn anything.",
+  title: "Edualist — Yurt Dışı Eğitim Danışmanı",
+  description: "Yurt dışında okumak isteyen öğrenciler için yapay zeka destekli danışmanlık.",
 };
 
 export default function RootLayout({

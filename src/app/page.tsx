@@ -79,17 +79,35 @@ export default function ChatPage() {
     <div className="flex flex-col h-screen bg-gray-50">
       <header className="flex items-center gap-2 px-6 py-4 border-b border-gray-200 bg-white">
         <span className="text-lg font-semibold text-gray-900">Edualist</span>
-        <span className="text-sm text-gray-400">AI Tutor</span>
+        <span className="text-sm text-gray-400">Yurt dışı eğitim danışmanın</span>
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           {messages.length === 0 && (
-            <div className="text-center text-gray-400 mt-20">
-              <p className="text-xl font-medium text-gray-600 mb-2">
-                What do you want to learn today?
+            <div className="text-center mt-20">
+              <p className="text-xl font-medium text-gray-700 mb-2">
+                Yurt dışında okumak mı istiyorsun?
               </p>
-              <p className="text-sm">Ask anything — math, science, history, coding...</p>
+              <p className="text-sm text-gray-400 mb-6">
+                Okul seçiminden vize sürecine, burslardan dil sınavlarına kadar sana yardımcı olabilirim.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {[
+                  "Hangi ülkede okusam?",
+                  "IELTS için ne yapmalıyım?",
+                  "Öğrenci vizesi nasıl alınır?",
+                  "Burs imkânları neler?",
+                ].map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    onClick={() => setInput(suggestion)}
+                    className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:border-blue-300 hover:text-blue-600 transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -139,7 +157,7 @@ export default function ChatPage() {
             onChange={onChangeTextarea}
             onKeyDown={onKeyDown}
             disabled={streaming}
-            placeholder="Ask a question..."
+            placeholder="Sorunuzu yazın..."
             className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm leading-relaxed outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 max-h-40 bg-white disabled:opacity-50"
           />
           <button
