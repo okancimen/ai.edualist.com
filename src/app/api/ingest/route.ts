@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { embedTexts } from "@/lib/voyage";
 
+export async function GET() {
+  return NextResponse.json({ ok: true, route: "ingest" });
+}
+
 type RawDocument = {
   source: string;
   school_name?: string;
