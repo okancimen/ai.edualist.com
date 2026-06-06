@@ -12,7 +12,7 @@ const QUESTIONS = [
   {
     id: "level",
     text: "Hangi eğitim seviyesini planlıyorsun?",
-    options: ["Lisans", "Yüksek Lisans", "Lise", "Dil Okulu / Hazırlık"],
+    options: ["Lisans", "Yüksek Lisans", "Lise", "Ortaokul"],
   },
   {
     id: "grade",
