@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, FormEvent, KeyboardEvent } from "react";
+import { MarkdownMessage } from "@/components/MarkdownMessage";
 
 type Message = {
   role: "user" | "assistant";
@@ -98,13 +99,17 @@ export default function ChatPage() {
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
-                    ? "bg-blue-600 text-white rounded-br-sm"
+                    ? "bg-blue-600 text-white rounded-br-sm whitespace-pre-wrap"
                     : "bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm"
                 }`}
               >
-                {msg.content}
+                {msg.role === "user" ? (
+                  msg.content
+                ) : (
+                  <MarkdownMessage content={msg.content} />
+                )}
                 {streaming &&
                   i === messages.length - 1 &&
                   msg.role === "assistant" &&
