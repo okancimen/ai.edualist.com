@@ -57,6 +57,8 @@ function UserBubble({ content }: { content: string }) {
 }
 
 export default function ChatPage() {
+  const [userName, setUserName] = useState("");
+  const [nameInput, setNameInput] = useState("");
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -167,7 +169,7 @@ export default function ChatPage() {
     setStep(QUESTIONS.length);
     const gradeText = newAnswers[1] !== "—" ? `Şu an ${newAnswers[1].toLowerCase()} öğrencisiyim ve ` : "";
     const summary =
-      `Merhaba! ${gradeText}yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
+      `Merhaba! Adım ${userName}. ${gradeText}Yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
       `Yıllık bütçem ${newAnswers[2].toLowerCase()} civarı, İngilizce seviyem ${newAnswers[3].toLowerCase()}. ` +
       `${newAnswers[4]} bölgesini düşünüyorum. Bana ne tavsiye edersin?`;
     const initial: Message[] = [{ role: "user", content: summary }];
@@ -211,7 +213,7 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <header className="flex items-center gap-2 px-6 py-4 border-b border-gray-200 bg-white">
-        <span className="text-lg font-semibold text-gray-900">Edualist</span>
+        <span className="text-lg font-semibold text-gray-900">Edubot</span>
         <span className="text-sm text-gray-400">Yurt dışı eğitim danışmanın</span>
       </header>
 
@@ -220,13 +222,47 @@ export default function ChatPage() {
         className="flex-1 overflow-y-auto px-4 py-6"
       >
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
-          {/* Greeting */}
+          {/* Greeting + name step */}
           <AssistantBubble>
-            Merhaba! 👋 Yurt dışı eğitim planlamanında sana yardımcı olmak için birkaç soru sormak istiyorum.
+            Merhaba! Ben Edubot, yurt dışı eğitim danışmanın. 👋 Sana daha iyi yardımcı olabilmek için önce adını öğrenebilir miyim?
           </AssistantBubble>
 
+          {!userName ? (
+            <form
+              className="flex gap-2 pl-1"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const trimmed = nameInput.trim();
+                if (trimmed) setUserName(trimmed);
+              }}
+            >
+              <input
+                type="text"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                placeholder="Adın..."
+                autoFocus
+                className="rounded-xl border border-gray-300 px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"
+              />
+              <button
+                type="submit"
+                disabled={!nameInput.trim()}
+                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Devam
+              </button>
+            </form>
+          ) : (
+            <>
+              <UserBubble content={userName} />
+              <AssistantBubble>
+                Merhaba {userName}! Sana daha iyi yardımcı olabilmek için birkaç soru sormak istiyorum.
+              </AssistantBubble>
+            </>
+          )}
+
           {/* Onboarding Q&A */}
-          {QUESTIONS.map((q, i) => {
+          {userName && QUESTIONS.map((q, i) => {
             const answered = i < answers.length;
             const isCurrent = i === step && !chatStarted;
 

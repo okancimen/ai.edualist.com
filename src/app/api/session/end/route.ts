@@ -38,9 +38,9 @@ ${profile ? `<p><strong>Profil:</strong> ${profile}</p>` : ""}
     `.trim();
 
     const { data, error } = await getResend().emails.send({
-      from: "Edualist <noreply@edubot.com.tr>",
+      from: "Edubot <noreply@edubot.com.tr>",
       to: "ceo@edualist.com",
-      subject: `Sohbet Logu — ${date}`,
+      subject: `Edubot Sohbet Logu — ${date}`,
       html,
     });
 
