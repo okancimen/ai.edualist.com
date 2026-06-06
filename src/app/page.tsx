@@ -85,6 +85,20 @@ export default function ChatPage() {
     }
   }, [messages, step, answers]);
 
+  // Send session log when user leaves the page
+  useEffect(() => {
+    const handlePageHide = () => {
+      if (!messages.length) return;
+      const payload = JSON.stringify({ messages, answers });
+      navigator.sendBeacon(
+        "/api/session/end",
+        new Blob([payload], { type: "application/json" })
+      );
+    };
+    window.addEventListener("pagehide", handlePageHide);
+    return () => window.removeEventListener("pagehide", handlePageHide);
+  }, [messages, answers]);
+
   async function streamMessage(chatMessages: Message[]) {
     setStreaming(true);
     const res = await fetch("/api/chat", {
