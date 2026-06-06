@@ -8,9 +8,11 @@ type Message = { role: "user" | "assistant"; content: string };
 
 export async function POST(req: Request) {
   try {
-    const { messages, answers } = (await req.json()) as {
+    const { messages, answers, userName, userEmail } = (await req.json()) as {
       messages: Message[];
       answers: string[];
+      userName?: string;
+      userEmail?: string;
     };
 
     if (!messages?.length) return new Response("ok");
@@ -23,15 +25,17 @@ export async function POST(req: Request) {
       .map((m) =>
         m.role === "user"
           ? `👤 Kullanıcı:\n${m.content}`
-          : `🤖 Edualist:\n${m.content}`
+          : `🤖 Edubot:\n${m.content}`
       )
       .join("\n\n---\n\n");
 
     const date = new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
 
     const html = `
-<h2>Edualist — Sohbet Özeti</h2>
+<h2>Edubot — Sohbet Özeti</h2>
 <p><strong>Tarih:</strong> ${date}</p>
+${userName ? `<p><strong>Ad:</strong> ${userName}</p>` : ""}
+${userEmail ? `<p><strong>E-posta:</strong> <a href="mailto:${userEmail}">${userEmail}</a></p>` : ""}
 ${profile ? `<p><strong>Profil:</strong> ${profile}</p>` : ""}
 <hr/>
 <pre style="font-family:sans-serif;white-space:pre-wrap;line-height:1.6">${transcript}</pre>

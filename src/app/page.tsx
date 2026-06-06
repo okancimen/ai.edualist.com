@@ -58,7 +58,9 @@ function UserBubble({ content }: { content: string }) {
 
 export default function ChatPage() {
   const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [nameInput, setNameInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -91,7 +93,7 @@ export default function ChatPage() {
   useEffect(() => {
     const handlePageHide = () => {
       if (!messages.length) return;
-      const payload = JSON.stringify({ messages, answers });
+      const payload = JSON.stringify({ messages, answers, userName, userEmail });
       navigator.sendBeacon(
         "/api/session/end",
         new Blob([payload], { type: "application/json" })
@@ -99,7 +101,7 @@ export default function ChatPage() {
     };
     window.addEventListener("pagehide", handlePageHide);
     return () => window.removeEventListener("pagehide", handlePageHide);
-  }, [messages, answers]);
+  }, [messages, answers, userName, userEmail]);
 
   async function streamMessage(chatMessages: Message[]) {
     setStreaming(true);
@@ -229,32 +231,44 @@ export default function ChatPage() {
 
           {!userName ? (
             <form
-              className="flex gap-2 pl-1"
+              className="flex flex-col gap-2 pl-1"
               onSubmit={(e) => {
                 e.preventDefault();
                 const trimmed = nameInput.trim();
-                if (trimmed) setUserName(trimmed);
+                if (trimmed) {
+                  setUserName(trimmed);
+                  setUserEmail(emailInput.trim());
+                }
               }}
             >
-              <input
-                type="text"
-                value={nameInput}
-                onChange={(e) => setNameInput(e.target.value)}
-                placeholder="Adın..."
-                autoFocus
-                className="rounded-xl border border-gray-300 px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"
-              />
-              <button
-                type="submit"
-                disabled={!nameInput.trim()}
-                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Devam
-              </button>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={nameInput}
+                  onChange={(e) => setNameInput(e.target.value)}
+                  placeholder="Adın *"
+                  autoFocus
+                  className="w-36 rounded-xl border border-gray-300 px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"
+                />
+                <input
+                  type="email"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  placeholder="E-posta (isteğe bağlı)"
+                  className="flex-1 rounded-xl border border-gray-300 px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"
+                />
+                <button
+                  type="submit"
+                  disabled={!nameInput.trim()}
+                  className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Devam
+                </button>
+              </div>
             </form>
           ) : (
             <>
-              <UserBubble content={userName} />
+              <UserBubble content={userName + (userEmail ? ` — ${userEmail}` : "")} />
               <AssistantBubble>
                 Merhaba {userName}! Sana daha iyi yardımcı olabilmek için birkaç soru sormak istiyorum.
               </AssistantBubble>
