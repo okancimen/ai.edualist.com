@@ -270,7 +270,7 @@ export default function ChatPage() {
             <>
               <UserBubble content={userName + (userEmail ? ` — ${userEmail}` : "")} />
               <AssistantBubble>
-                Merhaba {userName}! Sana daha iyi yardımcı olabilmek için birkaç soru sormak istiyorum.
+                Merhaba {userName}! Sana daha iyi yardımcı olabilmek için birkaç soru sormak istiyorum. Daha efektif olmak için bazı seçenekler sunacağım — ama istediğin zaman alttaki metin kutusuna doğrudan yazabilirsin.
               </AssistantBubble>
             </>
           )}
