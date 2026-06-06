@@ -39,44 +39,53 @@ async function scrapeKhda(): Promise<RawDocument[]> {
 }
 
 async function scrapeReddit(): Promise<RawDocument[]> {
-  const subreddits = ["dubai", "DubaiExpats", "UAE"];
-  const queries = ["KHDA school rating", "international school Dubai", "Dubai school expat"];
+  // Reddit JSON API now requires OAuth; use RSS feeds which remain open
+  const feeds = [
+    "https://www.reddit.com/r/dubai/search.rss?q=KHDA+school&sort=top&t=year",
+    "https://www.reddit.com/r/dubai/search.rss?q=international+school+Dubai&sort=top&t=year",
+    "https://www.reddit.com/r/DubaiExpats/search.rss?q=school+rating&sort=top&t=year",
+    "https://www.reddit.com/r/UAE/search.rss?q=Dubai+international+school&sort=top&t=year",
+    "https://www.reddit.com/r/dubai/top.rss?t=year",
+  ];
   const docs: RawDocument[] = [];
   const seen = new Set<string>();
 
-  for (const sub of subreddits) {
-    for (const q of queries) {
-      try {
-        const url = `https://www.reddit.com/r/${sub}/search.json?q=${encodeURIComponent(q)}&sort=top&limit=10&t=year`;
-        const res = await fetch(url, {
-          headers: { "User-Agent": "Edualist/1.0 (educational research)" },
+  for (const feedUrl of feeds) {
+    try {
+      const res = await fetch(feedUrl, {
+        headers: { "User-Agent": "Edualist/1.0 (educational research)" },
+      });
+      if (!res.ok) continue;
+      const xml = await res.text();
+
+      // Reddit feeds use Atom format
+      const items = xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g);
+      for (const [, item] of items) {
+        const title = (item.match(/<title(?:[^>]*)>([\s\S]*?)<\/title>/) ?? [])[1]
+          ?.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim() ?? "";
+        const link = (item.match(/<link[^>]+href="([^"]+)"/) ?? [])[1]?.trim() ?? "";
+        const desc = (item.match(/<content[^>]*>([\s\S]*?)<\/content>/) ?? [])[1]
+          ?.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")
+          .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 1200) ?? "";
+
+        if (seen.has(link) || !title || desc.length < 80) continue;
+        seen.add(link);
+
+        // Only keep school-relevant posts
+        const text = (title + " " + desc).toLowerCase();
+        const relevant = ["school", "khda", "curriculum", "education", "ib ", "british", "american", "montessori", "fees", "admission"].some(k => text.includes(k));
+        if (!relevant) continue;
+
+        docs.push({
+          source: "reddit",
+          title,
+          content: desc,
+          url: link,
+          metadata: { feed: feedUrl },
         });
-        if (!res.ok) continue;
-        const json = await res.json();
-        const posts = json?.data?.children ?? [];
-
-        for (const { data: post } of posts) {
-          if (seen.has(post.id)) continue;
-          seen.add(post.id);
-
-          const content = [post.title, post.selftext]
-            .filter(Boolean)
-            .join("\n")
-            .slice(0, 1500);
-
-          if (content.length < 100) continue;
-
-          docs.push({
-            source: "reddit",
-            title: post.title,
-            content,
-            url: `https://reddit.com${post.permalink}`,
-            metadata: { subreddit: sub, score: post.score, query: q },
-          });
-        }
-      } catch {
-        // skip failed subreddit/query combos
       }
+    } catch {
+      // skip failed feeds
     }
   }
 
