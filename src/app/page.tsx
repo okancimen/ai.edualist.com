@@ -24,6 +24,16 @@ const QUESTIONS = [
     text: "Yıllık eğitim bütçen ne kadar?",
     options: ["5.000$ altı", "5.000–15.000$", "15.000$+", "Burs arıyorum"],
   },
+  {
+    id: "english",
+    text: "İngilizce seviyeni nasıl değerlendirirsin?",
+    options: ["Başlangıç", "Orta seviye", "İleri seviye", "IELTS / TOEFL var"],
+  },
+  {
+    id: "timeline",
+    text: "Ne zaman başlamayı planlıyorsun?",
+    options: ["6 ay içinde", "1 yıl içinde", "1–2 yıl içinde", "Henüz bilmiyorum"],
+  },
 ];
 
 function AssistantBubble({ children }: { children: React.ReactNode }) {
@@ -122,7 +132,8 @@ export default function ChatPage() {
     setStep(QUESTIONS.length);
     const summary =
       `Merhaba! Şu an yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
-      `${newAnswers[1]} bölgesini düşünüyorum ve yıllık bütçem ${newAnswers[2].toLowerCase()} civarı. ` +
+      `${newAnswers[1]} bölgesini düşünüyorum, yıllık bütçem ${newAnswers[2].toLowerCase()} civarı. ` +
+      `İngilizce seviyem ${newAnswers[3].toLowerCase()} ve ${newAnswers[4].toLowerCase()} başlamayı hedefliyorum. ` +
       `Bana ne tavsiye edersin?`;
     const initial: Message[] = [{ role: "user", content: summary }];
     setMessages(initial);
