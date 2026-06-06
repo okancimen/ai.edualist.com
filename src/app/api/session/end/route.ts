@@ -37,15 +37,21 @@ ${profile ? `<p><strong>Profil:</strong> ${profile}</p>` : ""}
 <pre style="font-family:sans-serif;white-space:pre-wrap;line-height:1.6">${transcript}</pre>
     `.trim();
 
-    await getResend().emails.send({
+    const { data, error } = await getResend().emails.send({
       from: "Edualist <noreply@edubot.com.tr>",
       to: "ceo@edualist.com",
       subject: `Sohbet Logu — ${date}`,
       html,
     });
 
-    return new Response("ok");
-  } catch {
-    return new Response("error", { status: 500 });
+    if (error) {
+      console.error("Resend error:", JSON.stringify(error));
+      return new Response(JSON.stringify(error), { status: 500 });
+    }
+
+    return new Response(JSON.stringify({ ok: true, id: data?.id }));
+  } catch (e) {
+    console.error("Session end error:", e);
+    return new Response(String(e), { status: 500 });
   }
 }
