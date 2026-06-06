@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { embedTexts } from "@/lib/voyage";
 
 export async function GET() {
@@ -118,7 +118,7 @@ async function ingestDocuments(docs: RawDocument[]) {
       embedding: embeddings[j],
     }));
 
-    const { error } = await supabase.from("documents").insert(rows);
+    const { error } = await getSupabase().from("documents").insert(rows);
     if (error) throw new Error(error.message);
     inserted += rows.length;
   }

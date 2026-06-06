@@ -1,5 +1,5 @@
 import { embedText } from "./voyage";
-import { supabase } from "./supabase";
+import { getSupabase } from "./supabase";
 
 type Document = {
   id: number;
@@ -14,7 +14,7 @@ type Document = {
 export async function retrieveContext(query: string): Promise<string> {
   const embedding = await embedText(query);
 
-  const { data, error } = await supabase.rpc("match_documents", {
+  const { data, error } = await getSupabase().rpc("match_documents", {
     query_embedding: embedding,
     match_threshold: 0.45,
     match_count: 6,
