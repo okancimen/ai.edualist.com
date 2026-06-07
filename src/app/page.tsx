@@ -20,19 +20,19 @@ const QUESTIONS = [
     options: ["9. Sınıf", "10. Sınıf", "11. Sınıf", "12. Sınıf / Mezun"],
   },
   {
+    id: "curriculum",
+    text: "Hangi müfredatı / eğitim sistemini düşünüyorsun?",
+    options: ["IB Diploma", "A Level", "Amerikan Müfredatı", "Henüz bilmiyorum"],
+  },
+  {
+    id: "familiarity",
+    text: "IB, MYP, PYP, A Level gibi uluslararası programları ne kadar tanıyorsun?",
+    options: ["Hiç bilmiyorum", "Duydum, az biliyorum", "Oldukça iyi biliyorum", "Şu an bu sistemdeyim"],
+  },
+  {
     id: "budget",
     text: "Yıllık eğitim bütçen ne kadar?",
     options: ["5.000$ altı", "5.000–15.000$", "15.000–25.000$", "25.000$+"],
-  },
-  {
-    id: "english",
-    text: "İngilizce seviyeni nasıl değerlendirirsin?",
-    options: ["Başlangıç", "Orta seviye", "İleri seviye", "IELTS / TOEFL var"],
-  },
-  {
-    id: "region",
-    text: "Hangi bölgeyi / ülkeyi düşünüyorsun?",
-    options: ["Avrupa", "Amerika & Kanada", "Dubai & BAE", "Henüz bilmiyorum"],
   },
 ];
 
@@ -169,11 +169,12 @@ export default function ChatPage() {
 
     // All questions answered — kick off chat
     setStep(QUESTIONS.length);
-    const gradeText = newAnswers[1] !== "—" ? `Şu an ${newAnswers[1].toLowerCase()} öğrencisiyim ve ` : "";
+    const gradeText = newAnswers[1] !== "—" ? `${newAnswers[1].toLowerCase()} öğrencisiyim, ` : "";
     const summary =
       `Merhaba! Adım ${userName}. ${gradeText}Yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
-      `Yıllık bütçem ${newAnswers[2].toLowerCase()} civarı, İngilizce seviyem ${newAnswers[3].toLowerCase()}. ` +
-      `${newAnswers[4]} bölgesini düşünüyorum. Bana ne tavsiye edersin?`;
+      `Müfredat olarak ${newAnswers[2]} düşünüyorum. ` +
+      `IB, MYP, PYP, A Level gibi programlar hakkında: ${newAnswers[3].toLowerCase()}. ` +
+      `Yıllık bütçem ${newAnswers[4].toLowerCase()} civarı. Bana ne tavsiye edersin?`;
     const initial: Message[] = [{ role: "user", content: summary }];
     setMessages(initial);
     isAtBottomRef.current = true;
