@@ -39,7 +39,7 @@ const QUESTIONS = [
 function AssistantBubble({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex justify-start">
-      <div className="max-w-[80%] rounded-2xl rounded-bl-sm px-4 py-3 text-sm leading-relaxed bg-white text-gray-800 border border-gray-200 shadow-sm">
+      <div className="w-full rounded-2xl rounded-bl-sm px-4 py-3 text-sm leading-relaxed bg-white text-gray-800 border border-gray-200 shadow-sm">
         {children}
       </div>
     </div>
@@ -322,10 +322,10 @@ export default function ChatPage() {
                 <div key={i} className="flex flex-col gap-2">
                   <div className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     <div
-                      className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                      className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                         msg.role === "user"
-                          ? "bg-blue-600 text-white rounded-br-sm whitespace-pre-wrap"
-                          : "bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm"
+                          ? "max-w-[80%] bg-blue-600 text-white rounded-br-sm whitespace-pre-wrap"
+                          : "w-full bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm"
                       }`}
                     >
                       {msg.role === "user" ? (
