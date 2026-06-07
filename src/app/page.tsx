@@ -411,7 +411,10 @@ export default function ChatPage() {
           </button>
         </form>
         <p className="max-w-2xl mx-auto mt-2 text-xs text-gray-400 text-center">
-          Shift + Enter yeni satır
+          Powered by{" "}
+          <a href="https://www.edubot.com.tr" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 underline underline-offset-2">
+            edubot.com.tr
+          </a>
         </p>
       </div>
     </div>
