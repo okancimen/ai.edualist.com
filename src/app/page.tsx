@@ -155,9 +155,12 @@ export default function ChatPage() {
   async function handleOptionClick(option: string) {
     let newAnswers = [...answers, option];
 
-    // If education level doesn't have school grades, skip the grade question
+    // Q0 answered — conditionally skip grade and/or curriculum
     if (newAnswers.length === 1 && SKIP_GRADE.has(option)) {
-      newAnswers = [...newAnswers, "—"]; // sentinel so indices stay aligned
+      newAnswers = [...newAnswers, "—"]; // skip grade
+      if (option === "Yüksek Lisans") {
+        newAnswers = [...newAnswers, "—"]; // also skip curriculum for YL
+      }
     }
 
     setAnswers(newAnswers);
@@ -170,9 +173,15 @@ export default function ChatPage() {
     // All questions answered — kick off chat
     setStep(QUESTIONS.length);
     const gradeText = newAnswers[1] !== "—" ? `${newAnswers[1].toLowerCase()} öğrencisiyim, ` : "";
+    const curriculumText =
+      newAnswers[2] !== "—"
+        ? newAnswers[0] === "Lisans"
+          ? `${newAnswers[2]} mezunuyum. `
+          : `Müfredat olarak ${newAnswers[2]} düşünüyorum. `
+        : "";
     const summary =
       `Merhaba! Adım ${userName}. ${gradeText}Yurt dışında ${newAnswers[0].toLowerCase()} okumayı planlıyorum. ` +
-      `Müfredat olarak ${newAnswers[2]} düşünüyorum. ` +
+      `${curriculumText}` +
       `IB, MYP, PYP, A Level gibi programlar hakkında: ${newAnswers[3].toLowerCase()}. ` +
       `Yıllık bütçem ${newAnswers[4].toLowerCase()} civarı. Bana ne tavsiye edersin?`;
     const initial: Message[] = [{ role: "user", content: summary }];
@@ -281,23 +290,35 @@ export default function ChatPage() {
             const answered = i < answers.length;
             const isCurrent = i === step && !chatStarted;
 
-            // Hide the grade question when it was auto-skipped
+            // Hide auto-skipped questions
             if (i === 1 && answers[1] === "—") return null;
+            if (i === 2 && answers[2] === "—") return null;
 
             if (i > step && !chatStarted) return null;
 
+            // Dynamic question text based on education level
+            const questionText =
+              q.id === "curriculum" && answers[0] === "Lisans"
+                ? "Hangi eğitim sisteminden mezun oldun?"
+                : q.text;
+
+            // Dynamic options based on context
+            const questionOptions =
+              q.id === "grade" && answers[0] === "Ortaokul"
+                ? ["5. Sınıf", "6. Sınıf", "7. Sınıf", "8. Sınıf"]
+                : q.id === "curriculum" && answers[0] === "Lisans"
+                ? ["IB Diploma", "A Level", "Amerikan Müfredatı", "Türk Milli Eğitimi"]
+                : q.options;
+
             return (
               <div key={q.id} className="flex flex-col gap-2">
-                <AssistantBubble>{q.text}</AssistantBubble>
+                <AssistantBubble>{questionText}</AssistantBubble>
 
                 {answered ? (
                   <UserBubble content={answers[i]} />
                 ) : isCurrent ? (
                   <div className="flex flex-wrap gap-2 pl-1">
-                    {(q.id === "grade" && answers[0] === "Ortaokul"
-                      ? ["5. Sınıf", "6. Sınıf", "7. Sınıf", "8. Sınıf"]
-                      : q.options
-                    ).map((opt) => (
+                    {questionOptions.map((opt) => (
                       <button
                         key={opt}
                         onClick={() => handleOptionClick(opt)}
