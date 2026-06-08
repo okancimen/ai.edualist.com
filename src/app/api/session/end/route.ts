@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { getSupabase } from "@/lib/supabase";
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
@@ -16,6 +17,16 @@ export async function POST(req: Request) {
     };
 
     if (!messages?.length) return new Response("ok");
+
+    // Save session to Supabase for daily stats
+    await getSupabase().from("sessions").insert({
+      user_name: userName || null,
+      user_email: userEmail || null,
+      answers: answers || [],
+      message_count: messages.length,
+    }).then(({ error }) => {
+      if (error) console.error("Session insert error:", error.message);
+    });
 
     const profile = answers
       ?.filter((a) => a && a !== "—")
