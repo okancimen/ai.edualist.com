@@ -17,25 +17,40 @@ type RawDocument = {
 
 async function scrapeKhda(): Promise<RawDocument[]> {
   const res = await fetch("https://web.khda.gov.ae/en/Education-Directory/Schools", {
-    headers: { "User-Agent": "Mozilla/5.0" },
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; Edubot/1.0)" },
   });
   if (!res.ok) throw new Error(`KHDA fetch failed: ${res.status}`);
   const html = await res.text();
 
   const docs: RawDocument[] = [];
-  const ratingPattern = /khda-badge-dsib\s+rating-([\w-]+)[^>]*>.*?href="([^"]+)"[^>]*>\s*([^<]+)/g;
+
+  // Match each school's lnkName anchor, then look back for rating and ahead for area
+  const nameRe = /<a\s+id="lnkName"[^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
   let match: RegExpExecArray | null;
-  while ((match = ratingPattern.exec(html)) !== null) {
-    const [, rating, href, name] = match;
-    const schoolName = name.trim();
+
+  while ((match = nameRe.exec(html)) !== null) {
+    const href = match[1];
+    const schoolName = match[2].trim();
     if (!schoolName) continue;
+
+    // Rating is in the preceding ~3000 chars of the block
+    const before = html.substring(Math.max(0, match.index - 3000), match.index);
+    const ratingMatches = before.match(/rating-(outstanding|very-good|good|acceptable|not-inspected-yet)/g);
+    const rating = ratingMatches ? ratingMatches[ratingMatches.length - 1].replace("rating-", "") : "unknown";
+
+    // Area is right after the anchor
+    const after = html.substring(match.index, match.index + 400);
+    const areaMatch = after.match(/<span[^>]*id="lblArea"[^>]*>([^<]+)<\/span>/);
+    const area = areaMatch ? areaMatch[1].trim() : "";
+
+    const ratingLabel = rating.replace(/-/g, " ");
     docs.push({
       source: "khda",
       school_name: schoolName,
       title: `${schoolName} — KHDA Rating`,
-      content: `Okul: ${schoolName}. KHDA değerlendirmesi: ${rating.replace(/-/g, " ")}. Kaynak: KHDA (Dubai Knowledge and Human Development Authority).`,
+      content: `Okul: ${schoolName}. KHDA değerlendirmesi: ${ratingLabel}. ${area ? `Konum: ${area}, Dubai.` : "Dubai."} Kaynak: KHDA (Dubai Knowledge and Human Development Authority). Yıl: 2025-2026.`,
       url: `https://web.khda.gov.ae${href}`,
-      metadata: { rating },
+      metadata: { rating, area },
     });
   }
 
