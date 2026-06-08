@@ -225,7 +225,7 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <header className="flex items-center gap-2 px-6 py-4 border-b border-gray-200 bg-white">
-        <span className="text-lg font-semibold text-gray-900">Edubot</span>
+        <span className="text-lg font-semibold text-gray-900">Ela by Edualist</span>
         <span className="text-sm text-gray-400">Yurt dışı eğitim danışmanın</span>
       </header>
 
@@ -236,7 +236,7 @@ export default function ChatPage() {
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           {/* Greeting + name step */}
           <AssistantBubble>
-            Merhaba! Ben Edubot, yurt dışı eğitim danışmanın. 👋 Binlerce okul ve üniversite hakkında bilgiye sahibim — doğru okulu bulmandan okul sürecine, burs imkânlarından vize süreçlerine kadar her konuda yardımcı olabilirim. Başlamak için önce adını öğrenebilir miyim?
+            Merhaba! Ben Ela, Edualist'in AI asistanıyım. 🎓 Dubai'de doğru okulu bulmak için buradayım — başlamak için önce adınızı öğrenebilir miyim?
           </AssistantBubble>
 
           {!userName ? (

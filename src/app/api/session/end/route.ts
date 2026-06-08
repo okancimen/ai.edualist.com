@@ -36,14 +36,14 @@ export async function POST(req: Request) {
       .map((m) =>
         m.role === "user"
           ? `👤 Kullanıcı:\n${m.content}`
-          : `🤖 Edubot:\n${m.content}`
+          : `🤖 Ela:\n${m.content}`
       )
       .join("\n\n---\n\n");
 
     const date = new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
 
     const html = `
-<h2>Edubot — Sohbet Özeti</h2>
+<h2>Ela by Edualist — Sohbet Özeti</h2>
 <p><strong>Tarih:</strong> ${date}</p>
 ${userName ? `<p><strong>Ad:</strong> ${userName}</p>` : ""}
 ${userEmail ? `<p><strong>E-posta:</strong> <a href="mailto:${userEmail}">${userEmail}</a></p>` : ""}
@@ -55,7 +55,7 @@ ${profile ? `<p><strong>Profil:</strong> ${profile}</p>` : ""}
     const { data, error } = await getResend().emails.send({
       from: "Edubot <noreply@edubot.com.tr>",
       to: "ceo@edualist.com",
-      subject: `Edubot Sohbet Logu — ${date}`,
+      subject: `Ela — Sohbet Logu — ${date}`,
       html,
     });
 
