@@ -18,6 +18,8 @@ async function scrapeReddit(): Promise<RawDocument[]> {
     "https://www.reddit.com/r/dubai/search.rss?q=KHDA+school&sort=top&t=year",
     "https://www.reddit.com/r/dubai/search.rss?q=international+school+Dubai&sort=top&t=year",
     "https://www.reddit.com/r/DubaiExpats/search.rss?q=school+rating&sort=top&t=year",
+    "https://www.reddit.com/r/dubai/search.rss?q=GEMS+school&sort=top&t=year",
+    "https://www.reddit.com/r/DubaiExpats/search.rss?q=GEMS&sort=top&t=year",
     "https://www.reddit.com/r/UAE/search.rss?q=Dubai+international+school&sort=top&t=year",
     "https://www.reddit.com/r/dubai/top.rss?t=year",
   ];
