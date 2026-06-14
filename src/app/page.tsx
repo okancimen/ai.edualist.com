@@ -236,7 +236,7 @@ export default function ChatPage() {
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           {/* Greeting + name step */}
           <AssistantBubble>
-            Merhaba! Ben Ela, Edualist'in AI asistanıyım. 🎓 Dubai'de doğru okulu bulmak için buradayım — başlamak için önce adınızı öğrenebilir miyim?
+            Merhaba! Ben Ela, Edualist'in AI asistanıyım. 🎓 Dünyanın herhangi bir yerinde doğru okulu bulmak için buradayım — başlamak için önce adınızı öğrenebilir miyim?
           </AssistantBubble>
 
           {!userName ? (
