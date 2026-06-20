@@ -49,7 +49,7 @@ function AssistantBubble({ children }: { children: React.ReactNode }) {
 function UserBubble({ content }: { content: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[80%] rounded-2xl rounded-br-sm px-4 py-3 text-sm leading-relaxed bg-blue-600 text-white whitespace-pre-wrap">
+      <div className="max-w-[80%] rounded-2xl rounded-br-sm px-4 py-3 text-sm leading-relaxed bg-[#4241db] text-white whitespace-pre-wrap">
         {content}
       </div>
     </div>
@@ -258,19 +258,19 @@ export default function ChatPage() {
                   onChange={(e) => setNameInput(e.target.value)}
                   placeholder="Adın *"
                   autoFocus
-                  className="w-36 rounded-xl border border-gray-300 px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"
+                  className="w-36 rounded-xl border border-gray-300 px-4 py-2 text-sm text-gray-900 outline-none focus:border-[#4241db] focus:ring-2 focus:ring-[#4241db]/20 bg-white"
                 />
                 <input
                   type="email"
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
                   placeholder="E-posta (isteğe bağlı)"
-                  className="flex-1 rounded-xl border border-gray-300 px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"
+                  className="flex-1 rounded-xl border border-gray-300 px-4 py-2 text-sm text-gray-900 outline-none focus:border-[#4241db] focus:ring-2 focus:ring-[#4241db]/20 bg-white"
                 />
                 <button
                   type="submit"
                   disabled={!nameInput.trim()}
-                  className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="rounded-xl bg-[#4241db] px-4 py-2 text-sm font-medium text-white hover:bg-[#3736b8] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Devam
                 </button>
@@ -323,7 +323,7 @@ export default function ChatPage() {
                         key={opt}
                         onClick={() => handleOptionClick(opt)}
                         disabled={streaming}
-                        className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors disabled:opacity-50"
+                        className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:border-[#4241db] hover:text-[#4241db] hover:bg-[#4241db]/10 transition-colors disabled:opacity-50"
                       >
                         {opt}
                       </button>
@@ -345,7 +345,7 @@ export default function ChatPage() {
                     <div
                       className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                         msg.role === "user"
-                          ? "max-w-[80%] bg-blue-600 text-white rounded-br-sm whitespace-pre-wrap"
+                          ? "max-w-[80%] bg-[#4241db] text-white rounded-br-sm whitespace-pre-wrap"
                           : "w-full bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm"
                       }`}
                     >
@@ -369,7 +369,7 @@ export default function ChatPage() {
                         <button
                           key={opt}
                           onClick={() => sendText(opt)}
-                          className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                          className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:border-[#4241db] hover:text-[#4241db] hover:bg-[#4241db]/10 transition-colors"
                         >
                           {opt}
                         </button>
@@ -400,12 +400,12 @@ export default function ChatPage() {
             onKeyDown={onKeyDown}
             disabled={streaming || !chatStarted}
             placeholder={chatStarted ? "Sorunuzu yazın..." : "Yukarıdaki seçeneklerden birini seç..."}
-            className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 leading-relaxed outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 max-h-40 bg-white disabled:opacity-50"
+            className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 leading-relaxed outline-none focus:border-[#4241db] focus:ring-2 focus:ring-[#4241db]/20 max-h-40 bg-white disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={!input.trim() || streaming || !chatStarted}
-            className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="rounded-xl bg-[#4241db] px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-[#3736b8] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Gönder
           </button>
