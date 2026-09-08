@@ -2,24 +2,7 @@ import { cookies } from "next/headers";
 import { getSupabase } from "@/lib/supabase";
 import { LoginForm } from "./LoginForm";
 import { logout } from "./actions";
-
-type Session = {
-  user_name: string | null;
-  user_email: string | null;
-  message_count: number;
-  created_at: string;
-};
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleString("tr-TR", {
-    timeZone: "Europe/Istanbul",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import { LeadsTable } from "./LeadsTable";
 
 export default async function AdminPage({
   searchParams,
@@ -38,7 +21,7 @@ export default async function AdminPage({
 
   const { data: leads } = await getSupabase()
     .from("sessions")
-    .select("user_name, user_email, message_count, created_at")
+    .select("user_name, user_email, message_count, created_at, messages")
     .not("user_email", "is", null)
     .order("created_at", { ascending: false });
 
@@ -46,7 +29,7 @@ export default async function AdminPage({
     .from("sessions")
     .select("*", { count: "exact", head: true });
 
-  const rows = (leads ?? []) as Session[];
+  const rows = (leads ?? []) as Parameters<typeof LeadsTable>[0]["rows"];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -85,44 +68,7 @@ export default async function AdminPage({
           {rows.length === 0 ? (
             <p className="text-sm text-gray-400">Henüz lead yok.</p>
           ) : (
-            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-100 text-left text-xs text-gray-500 uppercase tracking-wide">
-                    <th className="px-4 py-3 font-medium">Ad</th>
-                    <th className="px-4 py-3 font-medium">E-posta</th>
-                    <th className="px-4 py-3 font-medium text-right">Mesaj</th>
-                    <th className="px-4 py-3 font-medium text-right">Tarih</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((s, i) => (
-                    <tr
-                      key={i}
-                      className="border-b border-gray-50 last:border-0 hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-3 text-gray-900">
-                        {s.user_name ?? "—"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <a
-                          href={`mailto:${s.user_email}`}
-                          className="text-[#4241db] hover:underline"
-                        >
-                          {s.user_email}
-                        </a>
-                      </td>
-                      <td className="px-4 py-3 text-right text-gray-600">
-                        {s.message_count}
-                      </td>
-                      <td className="px-4 py-3 text-right text-gray-400 whitespace-nowrap">
-                        {formatDate(s.created_at)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <LeadsTable rows={rows} />
           )}
         </div>
       </main>

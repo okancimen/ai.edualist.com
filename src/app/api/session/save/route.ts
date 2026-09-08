@@ -14,6 +14,7 @@ export async function POST(req: Request) {
           user_email: userEmail || null,
           answers: [],
           message_count: messages.length,
+          messages,
         },
         { onConflict: "session_id" }
       );
