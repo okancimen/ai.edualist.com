@@ -1,5 +1,4 @@
 import { Resend } from "resend";
-import { getSupabase } from "@/lib/supabase";
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
@@ -9,28 +8,14 @@ type Message = { role: "user" | "assistant"; content: string };
 
 export async function POST(req: Request) {
   try {
-    const { messages, answers, userName, userEmail } = (await req.json()) as {
+    const { messages, userName, userEmail } = (await req.json()) as {
       messages: Message[];
-      answers: string[];
+      answers?: string[];
       userName?: string;
       userEmail?: string;
     };
 
     if (!messages?.length) return new Response("ok");
-
-    // Save session to Supabase for daily stats
-    await getSupabase().from("sessions").insert({
-      user_name: userName || null,
-      user_email: userEmail || null,
-      answers: answers || [],
-      message_count: messages.length,
-    }).then(({ error }) => {
-      if (error) console.error("Session insert error:", error.message);
-    });
-
-    const profile = answers
-      ?.filter((a) => a && a !== "—")
-      .join(" · ");
 
     const transcript = messages
       .map((m) =>
@@ -47,7 +32,6 @@ export async function POST(req: Request) {
 <p><strong>Tarih:</strong> ${date}</p>
 ${userName ? `<p><strong>Ad:</strong> ${userName}</p>` : ""}
 ${userEmail ? `<p><strong>E-posta:</strong> <a href="mailto:${userEmail}">${userEmail}</a></p>` : ""}
-${profile ? `<p><strong>Profil:</strong> ${profile}</p>` : ""}
 <hr/>
 <pre style="font-family:sans-serif;white-space:pre-wrap;line-height:1.6">${transcript}</pre>
     `.trim();
