@@ -21,7 +21,7 @@ export default async function AdminPage({
 
   const { data: leads } = await getSupabase()
     .from("sessions")
-    .select("user_name, user_email, message_count, created_at, messages")
+    .select("user_name, user_email, message_count, created_at, messages, utm_source")
     .not("user_email", "is", null)
     .order("created_at", { ascending: false });
 

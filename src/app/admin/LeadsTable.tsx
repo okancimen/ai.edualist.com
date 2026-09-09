@@ -10,6 +10,7 @@ type Session = {
   message_count: number;
   created_at: string;
   messages: Message[] | null;
+  utm_source: string | null;
 };
 
 function formatDate(iso: string) {
@@ -34,6 +35,7 @@ export function LeadsTable({ rows }: { rows: Session[] }) {
             <tr className="border-b border-gray-100 text-left text-xs text-gray-500 uppercase tracking-wide">
               <th className="px-4 py-3 font-medium">Ad</th>
               <th className="px-4 py-3 font-medium">E-posta</th>
+              <th className="px-4 py-3 font-medium">Kaynak</th>
               <th className="px-4 py-3 font-medium text-right">Mesaj</th>
               <th className="px-4 py-3 font-medium text-right">Tarih</th>
             </tr>
@@ -62,6 +64,15 @@ export function LeadsTable({ rows }: { rows: Session[] }) {
                     </a>
                   ) : (
                     <span className="text-gray-400">—</span>
+                  )}
+                </td>
+                <td className="px-4 py-3">
+                  {s.utm_source ? (
+                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                      {s.utm_source}
+                    </span>
+                  ) : (
+                    <span className="text-gray-300">—</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-right text-gray-600">

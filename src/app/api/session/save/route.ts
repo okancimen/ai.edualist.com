@@ -2,7 +2,7 @@ import { getSupabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   try {
-    const { sessionId, messages, userName, userEmail } = await req.json();
+    const { sessionId, messages, userName, userEmail, utm } = await req.json();
     if (!sessionId || !messages?.length) return new Response("ok");
 
     const { error } = await getSupabase()
@@ -15,6 +15,9 @@ export async function POST(req: Request) {
           answers: [],
           message_count: messages.length,
           messages,
+          utm_source: utm?.source || null,
+          utm_medium: utm?.medium || null,
+          utm_campaign: utm?.campaign || null,
         },
         { onConflict: "session_id" }
       );
