@@ -37,7 +37,6 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [followUpOptions, setFollowUpOptions] = useState<string[]>([]);
-  const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scrollContainerRef = useRef<HTMLElement>(null);
   const isAtBottomRef = useRef(true);
@@ -66,7 +65,8 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (isAtBottomRef.current) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      const container = scrollContainerRef.current;
+      if (container) container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
     }
   }, [messages]);
 
@@ -300,7 +300,6 @@ export default function ChatPage() {
             );
           })}
 
-          <div ref={bottomRef} />
         </div>
       </main>
 
