@@ -147,7 +147,7 @@ export default function ChatPage() {
     );
 
     setStreaming(false);
-    textareaRef.current?.focus();
+    setTimeout(() => textareaRef.current?.focus(), 0);
   }
 
   async function sendText(content: string, name = userName, email = userEmail) {
